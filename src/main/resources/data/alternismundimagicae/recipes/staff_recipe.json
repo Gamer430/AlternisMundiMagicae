@@ -1,0 +1,18 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "magicmod:crystal"
+        },
+        {
+            "item": "magicmod:staff_base"
+        },
+        {
+            "item": "magicmod:staff_base"
+        }
+    ],
+    "result": {
+        "item": "alternismundimagicae:true_magic_staff",
+        "count": 1
+    }
+}
