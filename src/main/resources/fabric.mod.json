@@ -15,6 +15,12 @@
     ],
     "main": [
       "org.magicmaker.alternismundimagicae.Alternismundimagicae"
+    ],
+    "cardinal-components-entity": ["org.magicmaker.alternismundimagicae.cca.PlayerEntityCCARegistry"]
+  },
+  "custom": {
+    "cardinal-components": [
+
     ]
   },
   "mixins": [

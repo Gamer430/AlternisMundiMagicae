@@ -65,7 +65,7 @@ dependencies {
     include "maven.modrinth:architectury-api:9.2.14+fabric"
 
 
-    modImplementation "org.manadependants:ManaLib:1.1"
+    modImplementation("org.manadependants:ManaLib:1.8.1")
 
     modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cca_version}"
     modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cca_version}"
