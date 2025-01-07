@@ -14,9 +14,10 @@ import java.util.UUID;
 
 public class PlayerDataImpl implements PlayerData, AutoSyncedComponent {
     private int markValue;
+    private int healValue;
     private boolean isTeleportable;
     private boolean isBlacklisted;
-    private HashMap<UUID, Integer> MarkingsMap = new HashMap<>();
+    private HashMap<Integer, UUID> MarkingsMap = new HashMap<>();
 
     @Override
     public int getMarkValue() {
@@ -26,6 +27,39 @@ public class PlayerDataImpl implements PlayerData, AutoSyncedComponent {
     @Override
     public void setMarkValue(int amount) {
         this.markValue = amount;
+    }
+
+    @Override
+    public void cycleMarkValue() {
+        if (markValue < 3) {
+            markValue += 1;
+        } else {
+            markValue = 0;
+        }
+    }
+
+    @Override
+    public int getHealValue() {
+        return healValue;
+    }
+
+    @Override
+    public void setHealValue(int amount) {
+        this.healValue = amount;
+    }
+
+    @Override
+    public void cycleHealValue() {
+        if (healValue < 1) {
+            healValue += 1;
+        } else {
+            healValue = 0;
+        }
+    }
+
+    @Override
+    public Map<Integer, UUID> getMarkingsMap() {
+        return MarkingsMap; // Return the MarkingsMap
     }
 
     @Override
@@ -50,17 +84,11 @@ public class PlayerDataImpl implements PlayerData, AutoSyncedComponent {
 
     @Override
     public void updateMarkedMap(UUID uuid, int value) {
-        MarkingsMap.put(uuid, value);
+        MarkingsMap.put(value, uuid);
         updateBooleans(); // Update the booleans based on the new markings.
     }
 
     private void updateBooleans() {
-        // Example logic: If any marking has a value > 10, the player is blacklisted.
-        isBlacklisted = MarkingsMap.values().stream().anyMatch(mark -> mark > 10);
-
-        // Example logic: If total mark value exceeds a threshold, the player is teleportable.
-        int totalMarkValue = MarkingsMap.values().stream().mapToInt(Integer::intValue).sum();
-        isTeleportable = totalMarkValue >= 50;
     }
 
     @Override
@@ -75,7 +103,7 @@ public class PlayerDataImpl implements PlayerData, AutoSyncedComponent {
             NbtCompound markEntry = (NbtCompound) element;
             UUID uuid = markEntry.getUuid("uuid");
             int value = markEntry.getInt("value");
-            MarkingsMap.put(uuid, value);
+            MarkingsMap.put(value, uuid);
         }
     }
 
@@ -86,10 +114,10 @@ public class PlayerDataImpl implements PlayerData, AutoSyncedComponent {
         nbtCompound.putBoolean("isBlacklisted", isBlacklisted);
 
         NbtList markingsList = new NbtList();
-        for (Map.Entry<UUID, Integer> entry : MarkingsMap.entrySet()) {
+        for (Map.Entry<Integer, UUID> entry : MarkingsMap.entrySet()) {
             NbtCompound markEntry = new NbtCompound();
-            markEntry.putUuid("uuid", entry.getKey());
-            markEntry.putInt("value", entry.getValue());
+            markEntry.putInt("value", entry.getKey());
+            markEntry.putUuid("uuid", entry.getValue());
             markingsList.add(markEntry);
         }
         nbtCompound.put("MarkingsMap", markingsList);
@@ -107,9 +135,9 @@ public class PlayerDataImpl implements PlayerData, AutoSyncedComponent {
         buf.writeBoolean(isBlacklisted);
 
         buf.writeInt(MarkingsMap.size());
-        for (Map.Entry<UUID, Integer> entry : MarkingsMap.entrySet()) {
-            buf.writeUuid(entry.getKey());
-            buf.writeInt(entry.getValue());
+        for (Map.Entry<Integer, UUID> entry : MarkingsMap.entrySet()) {
+            buf.writeInt(entry.getKey());
+            buf.writeUuid(entry.getValue());
         }
         AutoSyncedComponent.super.writeSyncPacket(buf, recipient);
     }
@@ -123,9 +151,9 @@ public class PlayerDataImpl implements PlayerData, AutoSyncedComponent {
         MarkingsMap.clear();
         int mapSize = buf.readInt();
         for (int i = 0; i < mapSize; i++) {
-            UUID uuid = buf.readUuid();
             int value = buf.readInt();
-            MarkingsMap.put(uuid, value);
+            UUID uuid = buf.readUuid();
+            MarkingsMap.put(value, uuid);
         }
         AutoSyncedComponent.super.applySyncPacket(buf);
     }

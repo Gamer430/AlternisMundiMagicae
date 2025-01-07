@@ -23,16 +23,22 @@ import java.util.List;
 
 public class Blast implements SpellEffect {
     private void raytraceBlast(World world, PlayerEntity player, double chargeTime){
-        if(chargeTime < 10) return;
+        if(chargeTime < 2) return;
         // Scale speed and damage based on charge time
         // Scale speed and damage based on charge time
         float maxSpeed = 10.0f; // Blocks per second
         float maxDamage = 80.0f;
         int maxChargeTime = 200; // Adjust based on how long charging can take
 
+        float maxExplosionStrength = 10.0f; // 10x TNT strength
+        float baseExplosionStrength = 4.0f;
+
+
+
         float chargeFactor = Math.min((float) chargeTime / (float) maxChargeTime, 1.0f);
         float speed = chargeFactor * maxSpeed;
         float damage = chargeFactor * maxDamage;
+        float explosionStrength = baseExplosionStrength + chargeFactor * (maxExplosionStrength - baseExplosionStrength);// TNT explosion strength
 
         Vec3d start = player.getCameraPosVec(1.0F); // Start at player's eye position
         Vec3d direction = player.getRotationVec(1.0F).normalize(); // Unit direction vector
@@ -59,7 +65,15 @@ public class Blast implements SpellEffect {
             if (blockHitResult.getType() != HitResult.Type.MISS) {
                 // Handle block hit
                 if (blockHitResult instanceof BlockHitResult blockHit) {
-                    world.breakBlock(blockHit.getBlockPos(), true); // Example: Break the block
+                    Vec3d hitPosition = blockHit.getPos(); // Position of block hit
+                    world.createExplosion(
+                            player, // Entity causing the explosion
+                            hitPosition.x,
+                            hitPosition.y,
+                            hitPosition.z,
+                            explosionStrength,
+                            World.ExplosionSourceType.TNT // Explosion type
+                    );
                     break;
                 }
             }

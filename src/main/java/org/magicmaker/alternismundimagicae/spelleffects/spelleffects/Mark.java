@@ -11,19 +11,15 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
+import org.magicmaker.alternismundimagicae.cca.PlayerEntityCCARegistry;
+import org.magicmaker.alternismundimagicae.cca.entitycca.interfaces.PlayerData;
 import org.manadependants.manalib.classes.Spell;
 import org.manadependants.manalib.data.SpellEffect;
-import team.lodestar.lodestone.systems.easing.Easing;
-import team.lodestar.lodestone.systems.particle.builder.WorldParticleBuilder;
-import team.lodestar.lodestone.systems.particle.data.GenericParticleData;
-import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
-import team.lodestar.lodestone.systems.particle.data.spin.SpinParticleData;
 
-import java.awt.*;
 import java.util.List;
 
 public class Mark implements SpellEffect {
-    private void raytraceMark(World world, PlayerEntity player, String markType){
+    private void raytraceMark(World world, PlayerEntity player, int MarkType){
         float speed = 10;
 
         Vec3d start = player.getCameraPosVec(1.0F); // Start at player's eye position
@@ -70,12 +66,15 @@ public class Mark implements SpellEffect {
                 for (Entity hitEntity : hitEntities) {
                     if (hitEntity instanceof LivingEntity livingEntity) {
                         livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, 10));
+                        if(livingEntity instanceof PlayerEntity player1){
+                            PlayerData playerData = PlayerEntityCCARegistry.PLAYER_DATA.get(player1);
+                            playerData.updateMarkedMap(player.getUuid(), MarkType);
+                        }
                         break; // Stop after hitting one entity
                     }
                 }
                 break; // Stop the raycast after hitting an entity
             }
-            // Update current position
             currentPosition = nextPosition;
         }
     }
@@ -84,6 +83,7 @@ public class Mark implements SpellEffect {
 
     @Override
     public void apply(PlayerEntity playerEntity, double v, Spell spell) {
-
+        PlayerData playerData = PlayerEntityCCARegistry.PLAYER_DATA.get(playerEntity);
+        raytraceMark(playerEntity.getWorld(), playerEntity, playerData.getMarkValue());
     }
 }
