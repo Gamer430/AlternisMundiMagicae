@@ -1,11 +1,13 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "org.magicmaker.alternismundimagicae.mixin",
+  "package": "org.magicmaker.alternismundimagicae.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "PlayerMixin"
   ],
   "client": [
+    "MixinLivingEntityRenderer"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -15,8 +15,11 @@ import java.util.UUID;
 public class PlayerDataImpl implements PlayerData, AutoSyncedComponent {
     private int markValue;
     private int healValue;
+    private int barrierMastery;
     private boolean isTeleportable;
     private boolean isBlacklisted;
+    private boolean isShielded;
+    private boolean isInvisible;
     private HashMap<Integer, UUID> MarkingsMap = new HashMap<>();
 
     @Override
@@ -58,6 +61,37 @@ public class PlayerDataImpl implements PlayerData, AutoSyncedComponent {
     }
 
     @Override
+    public int getBarrierMastery(){return barrierMastery;}
+
+    @Override
+    public void setBarrierMastery(int mastery){this.barrierMastery = mastery;}
+
+    @Override
+    public void increaseBarrierMastery(int mastIncrease){
+        this.barrierMastery += mastIncrease;
+    }
+
+    @Override
+    public boolean getShielded(){
+        return this.isShielded;
+    }
+
+    @Override
+    public void setShielded(boolean value){
+        this.isShielded = value;
+    }
+
+    @Override
+    public boolean getInvisible() {
+        return this.isInvisible;
+    }
+
+    @Override
+    public void setInvisible(boolean value) {
+        this.isInvisible = value;
+    }
+
+    @Override
     public Map<Integer, UUID> getMarkingsMap() {
         return MarkingsMap; // Return the MarkingsMap
     }
@@ -96,6 +130,7 @@ public class PlayerDataImpl implements PlayerData, AutoSyncedComponent {
         this.markValue = nbtCompound.getInt("markValue");
         this.isTeleportable = nbtCompound.getBoolean("isTeleportable");
         this.isBlacklisted = nbtCompound.getBoolean("isBlacklisted");
+        this.isShielded = nbtCompound.getBoolean("isShielded");
 
         MarkingsMap.clear();
         NbtList markingsList = nbtCompound.getList("MarkingsMap", NbtElement.COMPOUND_TYPE);
@@ -112,6 +147,7 @@ public class PlayerDataImpl implements PlayerData, AutoSyncedComponent {
         nbtCompound.putInt("markValue", markValue);
         nbtCompound.putBoolean("isTeleportable", isTeleportable);
         nbtCompound.putBoolean("isBlacklisted", isBlacklisted);
+        nbtCompound.putBoolean("isShielded", isShielded);
 
         NbtList markingsList = new NbtList();
         for (Map.Entry<Integer, UUID> entry : MarkingsMap.entrySet()) {
@@ -133,6 +169,7 @@ public class PlayerDataImpl implements PlayerData, AutoSyncedComponent {
         buf.writeInt(markValue);
         buf.writeBoolean(isTeleportable);
         buf.writeBoolean(isBlacklisted);
+        buf.writeBoolean(isShielded);
 
         buf.writeInt(MarkingsMap.size());
         for (Map.Entry<Integer, UUID> entry : MarkingsMap.entrySet()) {
@@ -147,6 +184,7 @@ public class PlayerDataImpl implements PlayerData, AutoSyncedComponent {
         markValue = buf.readInt();
         isTeleportable = buf.readBoolean();
         isBlacklisted = buf.readBoolean();
+        isShielded = buf.readBoolean();
 
         MarkingsMap.clear();
         int mapSize = buf.readInt();

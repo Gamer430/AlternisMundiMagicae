@@ -14,6 +14,16 @@ public interface PlayerData extends Component {
     void setHealValue(int amount);
     void cycleHealValue();
 
+    int getBarrierMastery();
+    void setBarrierMastery(int mastery);
+    void increaseBarrierMastery(int mastIncrease);
+
+    boolean getShielded();
+    void setShielded(boolean value);
+
+    boolean getInvisible();
+    void setInvisible(boolean value);
+
     Map<Integer, UUID> getMarkingsMap();
 
     boolean getTeleportable();

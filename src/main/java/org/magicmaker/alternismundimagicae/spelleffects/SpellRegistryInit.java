@@ -9,5 +9,7 @@ public class SpellRegistryInit {
         spellRegistry.register(Alternismundimagicae.MODID, Spells.blastSpell);
         spellRegistry.register(Alternismundimagicae.MODID, Spells.markSpell);
         spellRegistry.register(Alternismundimagicae.MODID, Spells.healSpell);
+        spellRegistry.register(Alternismundimagicae.MODID, Spells.shieldSpell);
+        spellRegistry.register(Alternismundimagicae.MODID, Spells.invisibilitySpell);
     }
 }

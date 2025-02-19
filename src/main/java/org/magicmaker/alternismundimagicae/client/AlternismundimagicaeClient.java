@@ -6,5 +6,6 @@ public class AlternismundimagicaeClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+
     }
 }
